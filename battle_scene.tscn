@@ -1,0 +1,112 @@
+[gd_scene format=3 uid="uid://bsh3bmm5xkju4"]
+
+[ext_resource type="Script" uid="uid://c1af4jxiiujvc" path="res://BattleManager.cs" id="1_fw8re"]
+[ext_resource type="Texture2D" uid="uid://gxvnufsq0u4p" path="res://Combat Stage - Flood Monster.png" id="2_5g7vw"]
+[ext_resource type="Texture2D" uid="uid://csskr61mkjngg" path="res://monster_happy.png" id="2_r5l0u"]
+[ext_resource type="PackedScene" uid="uid://c85hau87b8sw" path="res://card.tscn" id="2_x5h4l"]
+[ext_resource type="Resource" uid="uid://q2fhu6l7alsg" path="res://FloodBarrier.tres" id="3_vtmj2"]
+[ext_resource type="Resource" uid="uid://bstlgnnht7aq8" path="res://MangroveWall.tres" id="4_irjls"]
+[ext_resource type="Resource" uid="uid://cguheccb700fn" path="res://SolarShade.tres" id="5_m1vkf"]
+
+[node name="BattleScene" type="Control" unique_id=939786600]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fw8re")
+CardTemplate = ExtResource("2_x5h4l")
+Deck = Array[Object]([ExtResource("3_vtmj2"), ExtResource("4_irjls"), ExtResource("5_m1vkf")])
+
+[node name="Background" type="TextureRect" parent="." unique_id=749961130]
+modulate = Color(0.42595553, 0.42595553, 0.4259555, 1)
+layout_mode = 0
+offset_right = 1149.0
+offset_bottom = 646.0
+texture = ExtResource("2_5g7vw")
+expand_mode = 1
+
+[node name="EnemyInfo" type="VBoxContainer" parent="." unique_id=774515847]
+layout_mode = 0
+offset_left = 259.0
+offset_top = 3.0
+offset_right = 947.0
+offset_bottom = 749.0
+
+[node name="EnemyName" type="Label" parent="EnemyInfo" unique_id=1994374573]
+layout_mode = 2
+text = "Monster Flood"
+horizontal_alignment = 1
+
+[node name="EnemyHP" type="ProgressBar" parent="EnemyInfo" unique_id=1066894131]
+layout_mode = 2
+
+[node name="SpriteContainer" type="Control" parent="EnemyInfo" unique_id=376618489]
+layout_mode = 2
+
+[node name="EnemySprite" type="TextureRect" parent="EnemyInfo/SpriteContainer" unique_id=986361641]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 118.0
+offset_right = 628.74786
+offset_bottom = 623.13354
+scale = Vector2(0.63158184, 0.54441047)
+texture = ExtResource("2_r5l0u")
+expand_mode = 5
+
+[node name="ClimateMeter" type="VBoxContainer" parent="." unique_id=1997572095]
+layout_mode = 0
+offset_left = 924.0
+offset_top = 273.0
+offset_right = 1149.0
+offset_bottom = 327.0
+
+[node name="MeterLabel" type="Label" parent="ClimateMeter" unique_id=1731604154]
+layout_mode = 2
+text = "Temperature Meter"
+
+[node name="TempBar" type="ProgressBar" parent="ClimateMeter" unique_id=1379342790]
+layout_mode = 2
+max_value = 10.0
+step = 0.1
+show_percentage = false
+
+[node name="PlayerUI" type="HBoxContainer" parent="." unique_id=1504177000]
+layout_mode = 0
+offset_left = 510.0
+offset_top = 563.0
+offset_right = 678.0
+offset_bottom = 653.0
+
+[node name="HandControl" type="Control" parent="PlayerUI" unique_id=1573891015]
+layout_mode = 2
+
+[node name="Hand" type="HBoxContainer" parent="PlayerUI/HandControl" unique_id=731222209]
+layout_mode = 0
+offset_left = -192.0
+offset_top = -121.0
+offset_right = 348.0
+offset_bottom = 23.0
+
+[node name="EnergyLabel" type="Label" parent="PlayerUI" unique_id=1164571360]
+layout_mode = 2
+text = "Energy: 3/3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HPLabel" type="Label" parent="PlayerUI" unique_id=713001835]
+layout_mode = 2
+text = "HP: 100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EndTurnBtn" type="Button" parent="." unique_id=10895616]
+layout_mode = 0
+offset_left = 1071.0
+offset_top = 611.0
+offset_right = 1149.0
+offset_bottom = 652.0
+text = "End Turn"
+
+[connection signal="pressed" from="EndTurnBtn" to="." method="_on_end_turn_btn_pressed"]

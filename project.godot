@@ -10,6 +10,7 @@ config_version=5
 
 [application]
 
+<<<<<<< HEAD
 config/name="Climate Clash Web"
 run/main_scene="uid://bdl7lqap7oeh3"
 config/features=PackedStringArray("4.6", "GL Compatibility")
@@ -24,6 +25,15 @@ RunStateNode="*uid://bhhvro2hcxbl8"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
+=======
+config/name="The Last Horizonn"
+config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[dotnet]
+
+project/assembly_name="The Last Horizonn"
+>>>>>>> 7be6539 (Menambahkan Act 0 Cutscene dan Battle System)
 
 [physics]
 
@@ -31,6 +41,7 @@ window/stretch/mode="canvas_items"
 
 [rendering]
 
+<<<<<<< HEAD
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
@@ -38,3 +49,8 @@ renderer/rendering_method.mobile="gl_compatibility"
 textures/stretch/mode="canvas_items"
 textures/size/viewport_height=1080
 textures/size/viewport_width=1920
+=======
+rendering_device/driver.windows="d3d12"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+>>>>>>> 7be6539 (Menambahkan Act 0 Cutscene dan Battle System)
