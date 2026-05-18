@@ -3,8 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://bob6bn5nhrmm2" path="res://assets/placeholders/backgrounds/boss_bg.png" id="1_1n7qe"]
 [ext_resource type="Script" uid="uid://cbrvprmxjsc3a" path="res://scripts/scenes/battle_controller.gd" id="2_8q81s"]
 [ext_resource type="Texture2D" uid="uid://cs0hb3ipcpxyg" path="res://assets/placeholders/characters/mc.png" id="3_p86go"]
+[ext_resource type="Texture2D" uid="uid://btneyxmgi28ic" path="res://assets/placeholders/characters/mcWaterImpact/1.png" id="4_f4mr2"]
 [ext_resource type="Texture2D" uid="uid://ce5m2717sph5b" path="res://assets/placeholders/characters/enemy_boss.png" id="4_xl0tw"]
 [ext_resource type="FontFile" uid="uid://uqx6muesuyyc" path="res://assets/placeholders/ui/fonts/main_font.ttf" id="5_v0r0h"]
+[ext_resource type="Texture2D" uid="uid://m4tdfuwmnewd" path="res://assets/placeholders/characters/fireImpact/1.png" id="6_cr1hc"]
 [ext_resource type="FontFile" uid="uid://bln4quqfg766w" path="res://assets/placeholders/ui/Pixelify_Sans/static/PixelifySans-SemiBold.ttf" id="6_ig6pl"]
 [ext_resource type="Texture2D" uid="uid://dnn37uciimn31" path="res://assets/placeholders/ui/Bar/playerHP.png" id="7_player_hp"]
 [ext_resource type="Texture2D" uid="uid://yfw3vhcfamgd" path="res://assets/placeholders/ui/Bar/playerHPHolder.png" id="8_player_hp_holder"]
@@ -12,7 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://cpt6ij55n5g8t" path="res://assets/placeholders/ui/Bar/BossHPHolder.png" id="10_boss_hp_holder"]
 [ext_resource type="Texture2D" uid="uid://bgf82qv77j7b3" path="res://assets/placeholders/ui/Bar/tempBar.png" id="11_temp_bar"]
 [ext_resource type="Texture2D" uid="uid://c2p0bxlietlbl" path="res://assets/placeholders/ui/Bar/tempBarHolder.png" id="12_temp_bar_holder"]
-[ext_resource type="Texture2D" path="res://assets/placeholders/ui/endTurn.png" id="13_end_turn"]
+[ext_resource type="Texture2D" uid="uid://bktfwh7aek4fl" path="res://assets/placeholders/ui/endTurn.png" id="13_end_turn"]
 [ext_resource type="Texture2D" uid="uid://bpyhse4eheaas" path="res://assets/placeholders/ui/pauseButton.png" id="14_pause_button"]
 [ext_resource type="Texture2D" uid="uid://caiwvir7imc4h" path="res://assets/placeholders/ui/panelDark.png" id="15_panel_dark"]
 
@@ -54,6 +56,16 @@ texture = ExtResource("3_p86go")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=948750299]
+visible = false
+layout_mode = 0
+offset_left = 186.0
+offset_top = 449.0
+offset_right = 2106.0
+offset_bottom = 796.0
+texture = ExtResource("4_f4mr2")
+stretch_mode = 5
+
 [node name="EnemyMC" type="TextureRect" parent="CharacterLayer" unique_id=1042514178]
 layout_mode = 0
 offset_left = 898.0
@@ -63,6 +75,17 @@ offset_bottom = 1017.6925
 texture = ExtResource("4_xl0tw")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="EnemyImpact" type="TextureRect" parent="CharacterLayer" unique_id=621790138]
+visible = false
+layout_mode = 0
+offset_left = -406.0
+offset_top = 449.0
+offset_right = 1514.0
+offset_bottom = 796.0
+texture = ExtResource("6_cr1hc")
+stretch_mode = 5
+flip_h = true
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=1529091857]
 custom_minimum_size = Vector2(1760, 1000)
@@ -168,10 +191,9 @@ layout_mode = 2
 
 [node name="EndTurnButton" type="Button" parent="Margin/VBox/BottomRow" unique_id=1805559408]
 layout_mode = 2
-icon = ExtResource("13_end_turn")
 theme_override_fonts/font = ExtResource("6_ig6pl")
 theme_override_font_sizes/font_size = 20
-text = ""
+icon = ExtResource("13_end_turn")
 
 [node name="RewardPanel" type="Panel" parent="." unique_id=1813811737]
 visible = false
@@ -216,25 +238,23 @@ alignment = 1
 custom_minimum_size = Vector2(220, 320)
 layout_mode = 2
 expand_icon = true
-text = ""
 
 [node name="RewardButton2" type="Button" parent="RewardPanel/RewardButtons" unique_id=261225078]
 custom_minimum_size = Vector2(220, 320)
 layout_mode = 2
 expand_icon = true
-text = ""
 
-[node name="PauseButton" type="Button" parent="." unique_id=970996502]
+[node name="PauseButton" type="Button" parent="." unique_id=1399094472]
 layout_mode = 0
-offset_left = 1774.0
-offset_top = 32.0
-offset_right = 1862.0
-offset_bottom = 120.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 100.0
+offset_bottom = 100.0
 icon = ExtResource("14_pause_button")
-expand_icon = true
 flat = true
+expand_icon = true
 
-[node name="PausePopup" type="Control" parent="." unique_id=477508848]
+[node name="PausePopup" type="Control" parent="." unique_id=1520912249]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -242,26 +262,25 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 
-[node name="Background" type="TextureRect" parent="PausePopup" unique_id=291276366]
+[node name="Background" type="TextureRect" parent="PausePopup" unique_id=2126908245]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -310.0
-offset_top = -180.0
-offset_right = 310.0
-offset_bottom = 180.0
+offset_left = -312.66107
+offset_top = -152.0
+offset_right = 313.07227
+offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("15_panel_dark")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="PauseVBox" type="VBoxContainer" parent="PausePopup" unique_id=446193807]
+[node name="PauseVBox" type="VBoxContainer" parent="PausePopup" unique_id=196231119]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -277,14 +296,14 @@ grow_vertical = 2
 theme_override_constants/separation = 24
 alignment = 1
 
-[node name="ResumeButton" type="Button" parent="PausePopup/PauseVBox" unique_id=713332793]
+[node name="ResumeButton" type="Button" parent="PausePopup/PauseVBox" unique_id=45628782]
 custom_minimum_size = Vector2(360, 62)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_ig6pl")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 56
 text = "Resume"
 
-[node name="QuitButton" type="Button" parent="PausePopup/PauseVBox" unique_id=1464284362]
+[node name="QuitButton" type="Button" parent="PausePopup/PauseVBox" unique_id=384256262]
 custom_minimum_size = Vector2(360, 62)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_ig6pl")

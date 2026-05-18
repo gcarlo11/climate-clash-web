@@ -37,6 +37,11 @@ const BAR_ANIM_DURATION := 0.22
 const PLAYER_ATTACK_TOTAL_DURATION := 2.0
 const PLAYER_ATTACK_HIT_TIME := 0.8
 const PLAYER_ATTACK_DASH_DISTANCE := 600.0
+const MC_WATER_IMPACT_PATH := "res://assets/placeholders/characters/mcWaterImpact"
+const FIRE_IMPACT_PATH := "res://assets/placeholders/characters/fireImpact"
+const BIO_IMPACT_PATH := "res://assets/placeholders/characters/bioImpact"
+const HEATWAVE_IMPACT_PATH := "res://assets/placeholders/characters/heatwaveImpact"
+const IMPACT_FRAME_STEP := 0.06
 const FLOOD_ATTACK_PATH := "res://assets/placeholders/characters/charFloodAttack"
 const FLOOD_ATTACK_FRAME_COUNT := 18
 const FLOOD_ATTACK_TOTAL_DURATION := 0.8
@@ -134,6 +139,16 @@ var _player_fx_tween: Tween
 var _enemy_attack_overlay: TextureRect
 var _enemy_attack_frames: Array = []
 var _enemy_attack_overlay_start_x: float = 0.0
+var _player_impact_overlay: TextureRect
+var _enemy_impact_overlay: TextureRect
+var _player_impact_frames_by_element: Dictionary = {}
+var _enemy_impact_frames_by_enemy: Dictionary = {}
+var _player_impact_tween: Tween
+var _enemy_impact_tween: Tween
+var _active_player_impact_frames: Array = []
+var _active_enemy_impact_frames: Array = []
+var _player_impact_use_stage_slot: bool = false
+var _enemy_impact_use_stage_slot: bool = false
 var _bar_tweens: Dictionary = {}
 var _player_idle_frames: Array = []
 var _enemy_idle_frames: Array = []
@@ -837,13 +852,57 @@ func _preload_attack_frames() -> void:
 		else:
 			add_child(_player_fx_overlay)
 
-func _play_player_attack_animation() -> void:
+	_player_impact_frames_by_element.clear()
+	_player_impact_frames_by_element[GameEnums.ElementType.WATER] = _load_sequence_frames(MC_WATER_IMPACT_PATH)
+	_player_impact_frames_by_element[GameEnums.ElementType.THERMAL] = _load_sequence_frames(FIRE_IMPACT_PATH)
+	_player_impact_frames_by_element[GameEnums.ElementType.BIO] = _load_sequence_frames(BIO_IMPACT_PATH)
+	_player_impact_frames_by_element[GameEnums.ElementType.NEUTRAL] = _player_impact_frames_by_element[GameEnums.ElementType.THERMAL]
+
+	_enemy_impact_frames_by_enemy.clear()
+	_enemy_impact_frames_by_enemy[GameEnums.EnemyType.HEATWAVE] = _load_sequence_frames(HEATWAVE_IMPACT_PATH)
+	_enemy_impact_frames_by_enemy[GameEnums.EnemyType.CLIMATE_COLLAPSE] = _load_sequence_frames(FIRE_IMPACT_PATH)
+
+	if _player_impact_overlay == null:
+		if character_layer != null:
+			_player_impact_overlay = character_layer.get_node_or_null("playerImpact") as TextureRect
+			_player_impact_use_stage_slot = _player_impact_overlay != null
+		if _player_impact_overlay == null:
+			_player_impact_overlay = TextureRect.new()
+			_player_impact_overlay.name = "playerImpact"
+			_player_impact_use_stage_slot = false
+			if character_layer != null:
+				character_layer.add_child(_player_impact_overlay)
+			else:
+				add_child(_player_impact_overlay)
+		_player_impact_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_player_impact_overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_player_impact_overlay.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_player_impact_overlay.visible = false
+
+	if _enemy_impact_overlay == null:
+		if character_layer != null:
+			_enemy_impact_overlay = character_layer.get_node_or_null("enemyImpact") as TextureRect
+			_enemy_impact_use_stage_slot = _enemy_impact_overlay != null
+		if _enemy_impact_overlay == null:
+			_enemy_impact_overlay = TextureRect.new()
+			_enemy_impact_overlay.name = "enemyImpact"
+			_enemy_impact_use_stage_slot = false
+			if character_layer != null:
+				character_layer.add_child(_enemy_impact_overlay)
+			else:
+				add_child(_enemy_impact_overlay)
+		_enemy_impact_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_enemy_impact_overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		_enemy_impact_overlay.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_enemy_impact_overlay.visible = false
+
+func _play_player_attack_animation(card_element: int = GameEnums.ElementType.NEUTRAL) -> void:
 	if player_mc == null:
 		return
 	if _attack_frames.size() == 0:
 		var t := create_tween()
-		t.tween_property(player_mc, "position:x", player_mc_base_pos.x + 600.0, 0.09)
-		t.tween_property(player_mc, "position:x", player_mc_base_pos.x, 0.11)
+		t.tween_property(player_mc, "modulate", Color(1.0, 1.0, 1.0, 1.0), PLAYER_ATTACK_TOTAL_DURATION)
+		_play_player_impact_animation(card_element, PLAYER_ATTACK_TOTAL_DURATION)
 		return
 
 	_attack_overlay.texture = _attack_frames[0]
@@ -860,11 +919,10 @@ func _play_player_attack_animation() -> void:
 
 	var total_frames := _attack_frames.size()
 	var total_duration := PLAYER_ATTACK_TOTAL_DURATION
+	_play_player_impact_animation(card_element, total_duration)
 
 	var t := create_tween().set_parallel(true)
 	t.tween_method(_update_attack_frame.bind(total_frames), 0, total_frames, total_duration)
-	t.tween_property(_attack_overlay, "position:x", _attack_overlay_start_x + PLAYER_ATTACK_DASH_DISTANCE, PLAYER_ATTACK_HIT_TIME)
-	t.tween_property(_attack_overlay, "position:x", _attack_overlay_start_x, total_duration - PLAYER_ATTACK_HIT_TIME).set_delay(PLAYER_ATTACK_HIT_TIME)
 	t.tween_callback(_finish_player_attack_animation).set_delay(total_duration)
 
 func _update_attack_frame(progress: float, total: int) -> void:
@@ -878,6 +936,93 @@ func _finish_player_attack_animation() -> void:
 		player_mc.position.x = player_mc_base_pos.x
 	if _attack_overlay != null:
 		_attack_overlay.visible = false
+
+func _play_player_impact_animation(element_type: int, duration: float) -> void:
+	if enemy_mc == null or _player_impact_overlay == null:
+		return
+	if not _player_impact_frames_by_element.has(element_type):
+		return
+	var frames := _player_impact_frames_by_element[element_type] as Array
+	if frames.size() == 0:
+		return
+
+	if _player_impact_tween != null:
+		_player_impact_tween.kill()
+
+	_active_player_impact_frames = frames.duplicate()
+	_player_impact_overlay.texture = frames[0]
+	if not _player_impact_use_stage_slot:
+		_player_impact_overlay.size = enemy_mc.size
+		_player_impact_overlay.expand_mode = enemy_mc.expand_mode
+		_player_impact_overlay.stretch_mode = enemy_mc.stretch_mode
+		_player_impact_overlay.position = enemy_mc.position
+	_player_impact_overlay.visible = true
+	_player_impact_overlay.modulate = Color.WHITE
+
+	var steps := maxi(1, int(ceil(duration / IMPACT_FRAME_STEP)))
+	var cycle := frames.size()
+	_player_impact_tween = create_tween()
+	_player_impact_tween.tween_method(_update_player_impact_frame.bind(cycle), 0, steps, duration)
+	_player_impact_tween.tween_callback(_finish_player_impact_animation)
+
+func _update_player_impact_frame(progress: float, cycle: int) -> void:
+	if _player_impact_overlay == null or cycle <= 0:
+		return
+	var frames := _active_player_impact_frames
+	if frames.size() == 0:
+		return
+	var idx := int(progress) % cycle
+	if idx < frames.size():
+		_player_impact_overlay.texture = frames[idx]
+
+func _finish_player_impact_animation() -> void:
+	_active_player_impact_frames = []
+	_player_impact_tween = null
+	if _player_impact_overlay != null:
+		_player_impact_overlay.visible = false
+
+func _play_enemy_impact_animation(duration: float) -> void:
+	if enemy == null or player_mc == null or _enemy_impact_overlay == null:
+		return
+	if not _enemy_impact_frames_by_enemy.has(enemy.type):
+		return
+	var frames := _enemy_impact_frames_by_enemy[enemy.type] as Array
+	if frames.size() == 0:
+		return
+
+	if _enemy_impact_tween != null:
+		_enemy_impact_tween.kill()
+
+	_active_enemy_impact_frames = frames.duplicate()
+	_enemy_impact_overlay.texture = frames[0]
+	if not _enemy_impact_use_stage_slot:
+		_enemy_impact_overlay.size = player_mc.size
+		_enemy_impact_overlay.expand_mode = player_mc.expand_mode
+		_enemy_impact_overlay.stretch_mode = player_mc.stretch_mode
+		_enemy_impact_overlay.position = player_mc.position
+	_enemy_impact_overlay.visible = true
+	_enemy_impact_overlay.modulate = Color.WHITE
+	_enemy_impact_overlay.flip_h = true
+
+	var cycle := frames.size()
+	_enemy_impact_tween = create_tween()
+	_enemy_impact_tween.tween_method(_update_enemy_impact_frame.bind(cycle), 0, cycle, duration)
+	_enemy_impact_tween.tween_callback(_finish_enemy_impact_animation)
+
+func _update_enemy_impact_frame(progress: float, cycle: int) -> void:
+	if _enemy_impact_overlay == null or cycle <= 0:
+		return
+	if _active_enemy_impact_frames.size() == 0:
+		return
+	var idx := clampi(int(progress), 0, cycle - 1)
+	if idx < _active_enemy_impact_frames.size():
+		_enemy_impact_overlay.texture = _active_enemy_impact_frames[idx]
+
+func _finish_enemy_impact_animation() -> void:
+	_active_enemy_impact_frames = []
+	_enemy_impact_tween = null
+	if _enemy_impact_overlay != null:
+		_enemy_impact_overlay.visible = false
 
 func _play_player_heal_animation() -> void:
 	_play_player_fx_animation(_player_heal_up_frames, PLAYER_HEAL_UP_DURATION)
@@ -1156,7 +1301,7 @@ func _apply_card_effects(card: CardData) -> void:
 		_play_sfx("sfx_mc_attack")
 		var damage := DamageCalculator.calculate_damage(card, enemy, offensive_buff_this_combat)
 		var mult := DamageCalculator.get_element_multiplier(enemy.type, card.element)
-		_play_player_attack_animation()
+		_play_player_attack_animation(card.element)
 		_queue_damage_effect(damage, mult)
 
 	if card.heal > 0:
@@ -1629,6 +1774,7 @@ func _play_enemy_attack_animation() -> void:
 		elif enemy.type == GameEnums.EnemyType.CLIMATE_COLLAPSE:
 			total_duration = BOSS_ATTACK_TOTAL_DURATION
 			dash_distance = BOSS_ATTACK_DASH_DISTANCE
+		_play_enemy_impact_animation(total_duration)
 		@warning_ignore("confusable_local_declaration")
 		var t := create_tween().set_parallel(true)
 		t.tween_method(_update_enemy_attack_frame.bind(total_frames), 0, total_frames, total_duration)
@@ -1654,6 +1800,7 @@ func _finish_enemy_attack_animation() -> void:
 		enemy_mc.position.x = enemy_mc_base_pos.x
 	if _enemy_attack_overlay != null:
 		_enemy_attack_overlay.visible = false
+	_finish_enemy_impact_animation()
 
 func _play_enemy_hit_animation() -> void:
 	if enemy_mc == null:

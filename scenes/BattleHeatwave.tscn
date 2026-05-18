@@ -4,8 +4,10 @@
 [ext_resource type="Script" uid="uid://cbrvprmxjsc3a" path="res://scripts/scenes/battle_controller.gd" id="2_v2pka"]
 [ext_resource type="Texture2D" uid="uid://cs0hb3ipcpxyg" path="res://assets/placeholders/characters/mc.png" id="3_o766p"]
 [ext_resource type="Texture2D" uid="uid://cywag26ofgbjh" path="res://assets/placeholders/characters/enemy.png" id="4_dyqa1"]
+[ext_resource type="Texture2D" uid="uid://btneyxmgi28ic" path="res://assets/placeholders/characters/mcWaterImpact/1.png" id="4_jclkx"]
 [ext_resource type="FontFile" uid="uid://uqx6muesuyyc" path="res://assets/placeholders/ui/fonts/main_font.ttf" id="5_a3hbc"]
 [ext_resource type="FontFile" uid="uid://bln4quqfg766w" path="res://assets/placeholders/ui/Pixelify_Sans/static/PixelifySans-SemiBold.ttf" id="6_p548r"]
+[ext_resource type="Texture2D" uid="uid://ciea6vyk2xj1w" path="res://assets/placeholders/characters/heatwaveImpact/1.png" id="6_wk4ee"]
 [ext_resource type="Texture2D" uid="uid://dnn37uciimn31" path="res://assets/placeholders/ui/Bar/playerHP.png" id="7_player_hp"]
 [ext_resource type="FontFile" uid="uid://v77ih07e3tdj" path="res://assets/placeholders/ui/Pixelify_Sans/static/PixelifySans-Bold.ttf" id="8_7cuw0"]
 [ext_resource type="Texture2D" uid="uid://yfw3vhcfamgd" path="res://assets/placeholders/ui/Bar/playerHPHolder.png" id="8_player_hp_holder"]
@@ -59,6 +61,16 @@ texture = ExtResource("3_o766p")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=853825292]
+visible = false
+layout_mode = 0
+offset_left = 186.0
+offset_top = 449.0
+offset_right = 2106.0
+offset_bottom = 796.0
+texture = ExtResource("4_jclkx")
+stretch_mode = 5
+
 [node name="EnemyMC" type="TextureRect" parent="CharacterLayer" unique_id=374397511]
 modulate = Color(1.2118225, 0.9705347, 0.70570713, 1)
 layout_mode = 0
@@ -69,6 +81,17 @@ offset_bottom = 1027.1172
 texture = ExtResource("4_dyqa1")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="EnemyImpact" type="TextureRect" parent="CharacterLayer" unique_id=1872506786]
+visible = false
+layout_mode = 0
+offset_left = -406.0
+offset_top = 449.0
+offset_right = 1514.0
+offset_bottom = 796.0
+texture = ExtResource("6_wk4ee")
+stretch_mode = 5
+flip_h = true
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=1529091857]
 custom_minimum_size = Vector2(1760, 1000)
