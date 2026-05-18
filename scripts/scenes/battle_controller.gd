@@ -170,6 +170,15 @@ var pause_resume_button: Button
 var pause_quit_button: Button
 var _pause_popup_tween: Tween
 
+func _find_impact_overlay(names: Array[String]) -> TextureRect:
+	if character_layer == null:
+		return null
+	for n in names:
+		var node := character_layer.get_node_or_null(n)
+		if node is TextureRect:
+			return node as TextureRect
+	return null
+
 func _ready() -> void:
 	rng.randomize()
 	run_state = get_node("/root/RunStateNode")
@@ -863,9 +872,8 @@ func _preload_attack_frames() -> void:
 	_enemy_impact_frames_by_enemy[GameEnums.EnemyType.CLIMATE_COLLAPSE] = _load_sequence_frames(FIRE_IMPACT_PATH)
 
 	if _player_impact_overlay == null:
-		if character_layer != null:
-			_player_impact_overlay = character_layer.get_node_or_null("playerImpact") as TextureRect
-			_player_impact_use_stage_slot = _player_impact_overlay != null
+		_player_impact_overlay = _find_impact_overlay(["playerImpact", "PlayerImpact", "playerImpat", "PlayerImpat"])
+		_player_impact_use_stage_slot = _player_impact_overlay != null
 		if _player_impact_overlay == null:
 			_player_impact_overlay = TextureRect.new()
 			_player_impact_overlay.name = "playerImpact"
@@ -880,9 +888,8 @@ func _preload_attack_frames() -> void:
 		_player_impact_overlay.visible = false
 
 	if _enemy_impact_overlay == null:
-		if character_layer != null:
-			_enemy_impact_overlay = character_layer.get_node_or_null("enemyImpact") as TextureRect
-			_enemy_impact_use_stage_slot = _enemy_impact_overlay != null
+		_enemy_impact_overlay = _find_impact_overlay(["enemyImpact", "EnemyImpact", "enemyImpat", "EnemyImpat"])
+		_enemy_impact_use_stage_slot = _enemy_impact_overlay != null
 		if _enemy_impact_overlay == null:
 			_enemy_impact_overlay = TextureRect.new()
 			_enemy_impact_overlay.name = "enemyImpact"
@@ -959,10 +966,9 @@ func _play_player_impact_animation(element_type: int, duration: float) -> void:
 	_player_impact_overlay.visible = true
 	_player_impact_overlay.modulate = Color.WHITE
 
-	var steps := maxi(1, int(ceil(duration / IMPACT_FRAME_STEP)))
 	var cycle := frames.size()
 	_player_impact_tween = create_tween()
-	_player_impact_tween.tween_method(_update_player_impact_frame.bind(cycle), 0, steps, duration)
+	_player_impact_tween.tween_method(_update_player_impact_frame.bind(cycle), 0, cycle, duration)
 	_player_impact_tween.tween_callback(_finish_player_impact_animation)
 
 func _update_player_impact_frame(progress: float, cycle: int) -> void:
@@ -971,7 +977,7 @@ func _update_player_impact_frame(progress: float, cycle: int) -> void:
 	var frames := _active_player_impact_frames
 	if frames.size() == 0:
 		return
-	var idx := int(progress) % cycle
+	var idx := clampi(int(progress), 0, cycle - 1)
 	if idx < frames.size():
 		_player_impact_overlay.texture = frames[idx]
 
