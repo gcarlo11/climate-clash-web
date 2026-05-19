@@ -56,16 +56,6 @@ texture = ExtResource("3_p86go")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=948750299]
-visible = false
-layout_mode = 0
-offset_left = 186.0
-offset_top = 449.0
-offset_right = 2106.0
-offset_bottom = 796.0
-texture = ExtResource("4_f4mr2")
-stretch_mode = 5
-
 [node name="EnemyMC" type="TextureRect" parent="CharacterLayer" unique_id=1042514178]
 layout_mode = 0
 offset_left = 898.0
@@ -76,13 +66,23 @@ texture = ExtResource("4_xl0tw")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=948750299]
+visible = false
+layout_mode = 0
+offset_left = 186.0
+offset_top = 449.0
+offset_right = 2106.0
+offset_bottom = 796.0
+texture = ExtResource("4_f4mr2")
+stretch_mode = 5
+
 [node name="EnemyImpact" type="TextureRect" parent="CharacterLayer" unique_id=621790138]
 visible = false
 layout_mode = 0
-offset_left = -406.0
-offset_top = 449.0
-offset_right = 1514.0
-offset_bottom = 796.0
+offset_left = -827.251
+offset_top = 234.0
+offset_right = 3698.8584
+offset_bottom = 1052.0
 texture = ExtResource("6_cr1hc")
 stretch_mode = 5
 flip_h = true

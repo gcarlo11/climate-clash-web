@@ -62,6 +62,8 @@ const PLAYER_IDLE_FRAME_START := 1
 const PLAYER_IDLE_FRAME_END := 36
 const FLOOD_IDLE_FRAME_START := 1
 const FLOOD_IDLE_FRAME_END := 33
+const BOSS_IDLE_FRAME_START := 1
+const BOSS_IDLE_FRAME_END := 36
 const IDLE_LOOP_DURATION := 2.0
 const PLAYER_DODGE_PATH := "res://assets/placeholders/characters/charMCDodge"
 const PLAYER_HEAL_UP_PATH := "res://assets/placeholders/characters/charMCHealUp"
@@ -307,6 +309,7 @@ func _setup_bar_textures() -> void:
 			enemy_hp_fill_mode
 		)
 		enemy_hp_bar.custom_minimum_size = HP_BAR_DISPLAY_SIZE
+		enemy_hp_bar.min_value = 0.0
 		enemy_hp_bar.step = 0.01
 		enemy_hp_bar.max_value = enemy.max_hp
 		enemy_hp_bar.value = enemy_hp
@@ -393,8 +396,15 @@ func _refresh_ui() -> void:
 
 	enemy_stats.text = "%s HP: %d/%d" % [enemy.display_name, enemy_hp, enemy.max_hp]
 	if enemy_hp_bar != null:
+		enemy_hp_bar.min_value = 0.0
 		enemy_hp_bar.max_value = enemy.max_hp
-		_animate_bar_to_value(enemy_hp_bar, enemy_hp)
+		var key := enemy_hp_bar.get_instance_id()
+		if _bar_tweens.has(key):
+			var old_tween: Variant = _bar_tweens[key]
+			if old_tween is Tween:
+				(old_tween as Tween).kill()
+			_bar_tweens.erase(key)
+		enemy_hp_bar.value = float(enemy_hp)
 
 	_animate_bar_to_value(meter_bar, run_state.temperature)
 	meter_label.text = "Temperature: %d/%d" % [run_state.temperature, run_state.temperature_max]
@@ -1597,6 +1607,8 @@ func _preload_idle_frames() -> void:
 		enemy_idle_path = BOSS_IDLE_PATH
 	if enemy.type == GameEnums.EnemyType.FLOOD:
 		_enemy_idle_frames = _load_flood_idle_frames()
+	elif enemy.type == GameEnums.EnemyType.CLIMATE_COLLAPSE:
+		_enemy_idle_frames = _load_boss_idle_frames()
 	else:
 		_enemy_idle_frames = _load_sequence_frames(enemy_idle_path)
 
@@ -1615,6 +1627,17 @@ func _load_flood_idle_frames() -> Array:
 	var frames: Array = []
 	for idx in range(FLOOD_IDLE_FRAME_START, FLOOD_IDLE_FRAME_END + 1):
 		var path := "%s/%d.png" % [FLOOD_IDLE_PATH, idx]
+		if not ResourceLoader.exists(path):
+			continue
+		var tex := load(path)
+		if tex is Texture2D:
+			frames.append(tex)
+	return frames
+
+func _load_boss_idle_frames() -> Array:
+	var frames: Array = []
+	for idx in range(BOSS_IDLE_FRAME_START, BOSS_IDLE_FRAME_END + 1):
+		var path := "%s/%d.png" % [BOSS_IDLE_PATH, idx]
 		if not ResourceLoader.exists(path):
 			continue
 		var tex := load(path)

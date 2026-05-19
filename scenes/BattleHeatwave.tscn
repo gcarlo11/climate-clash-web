@@ -61,16 +61,6 @@ texture = ExtResource("3_o766p")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=853825292]
-visible = false
-layout_mode = 0
-offset_left = 186.0
-offset_top = 449.0
-offset_right = 2106.0
-offset_bottom = 796.0
-texture = ExtResource("4_jclkx")
-stretch_mode = 5
-
 [node name="EnemyMC" type="TextureRect" parent="CharacterLayer" unique_id=374397511]
 modulate = Color(1.2118225, 0.9705347, 0.70570713, 1)
 layout_mode = 0
@@ -80,6 +70,16 @@ offset_right = 1792.0
 offset_bottom = 1027.1172
 texture = ExtResource("4_dyqa1")
 expand_mode = 1
+stretch_mode = 5
+
+[node name="PlayerImpact" type="TextureRect" parent="CharacterLayer" unique_id=853825292]
+visible = false
+layout_mode = 0
+offset_left = 186.0
+offset_top = 449.0
+offset_right = 2106.0
+offset_bottom = 796.0
+texture = ExtResource("4_jclkx")
 stretch_mode = 5
 
 [node name="EnemyImpact" type="TextureRect" parent="CharacterLayer" unique_id=1872506786]
