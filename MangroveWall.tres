@@ -1,0 +1,10 @@
+[gd_resource type="Resource" format=3 uid="uid://bstlgnnht7aq8"]
+
+[ext_resource type="Script" uid="uid://c67s1u4044ood" path="res://CardResource.cs" id="1_mp41p"]
+
+[resource]
+script = ExtResource("1_mp41p")
+CardName = "Mangrove Wall"
+Cost = 1
+BlockValue = 4
+HealValue = 2

@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://c85hau87b8sw"]
+
+[ext_resource type="Script" uid="uid://bpwwm7owybsua" path="res://Card.cs" id="1_kikvd"]
+
+[node name="Card" type="Control" unique_id=1192617321]
+custom_minimum_size = Vector2(150, 200)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1002.0
+offset_bottom = -428.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(100, 150)
+script = ExtResource("1_kikvd")
+
+[node name="Background" type="ColorRect" parent="." unique_id=726683632]
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 200.0
+mouse_filter = 2
+
+[node name="CardName" type="Label" parent="." unique_id=1153803791]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CostLabel" type="Label" parent="." unique_id=1576528987]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ElementIcon" type="TextureRect" parent="." unique_id=2059646121]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
